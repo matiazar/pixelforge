@@ -3,6 +3,7 @@
 use App\Enums\GenerationStatus;
 use App\Exceptions\DailyLimitReached;
 use App\Exceptions\InsufficientBalance;
+use App\Exceptions\InvalidMarkupSetting;
 use App\Models\Generation;
 use App\Models\Setting;
 use App\Models\User;
@@ -123,3 +124,19 @@ it('does not count generations in backoff as ahead in the queue', function () {
 
     expect($this->service->waitsForSlot($generation))->toBeFalse();
 });
+
+it('stores the markup in force and holds the maximum price with it', function () {
+    Setting::put('markup_percent', '40');
+
+    $generation = $this->service->create($this->user, generationInput());
+
+    expect($generation->markup_percent)->toBe(40)
+        ->and($generation->estimate_max_nano)->toBe(523_425_000)
+        ->and($this->user->fresh()->balance_nano)->toBe(1_000_000_000 - 523_425_000);
+});
+
+it('refuses to price with a stored markup that is not a whole percent from 0 to 100', function (string $stored) {
+    Setting::put('markup_percent', $stored);
+
+    $this->service->create($this->user, generationInput());
+})->with(['', 'abc', '2.5', '-1', '101'])->throws(InvalidMarkupSetting::class);

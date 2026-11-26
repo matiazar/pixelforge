@@ -3,13 +3,6 @@
 return [
 
     /*
-    | Our margin over the provider cost, in percent. Fixed by the assessment;
-    | not editable from the admin settings.
-    */
-
-    'markup_percent' => 25,
-
-    /*
     | Fictitious credit packs (USD) offered by "Buy credits". No real payment.
     */
 
@@ -23,6 +16,9 @@ return [
         'daily_limit' => 20,
         'timezone' => 'UTC',
         'registration_open' => '1',
+        // Our margin over the provider cost, whole percent 0..100. Each generation
+        // keeps the value in force when it was created.
+        'markup_percent' => '25',
     ],
 
     /*

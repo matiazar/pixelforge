@@ -28,6 +28,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property int $estimate_min_nano
  * @property int $estimate_max_nano
  * @property int|null $cost_nano
+ * @property int $markup_percent
  * @property int|null $price_nano
  * @property string|null $image_url
  * @property CarbonInterface|null $image_url_expires_at
@@ -63,6 +64,7 @@ class Generation extends Model
             'estimate_min_nano' => 'integer',
             'estimate_max_nano' => 'integer',
             'cost_nano' => 'integer',
+            'markup_percent' => 'integer',
             'price_nano' => 'integer',
             'attempts' => 'integer',
             'ambiguous' => 'boolean',

@@ -36,6 +36,8 @@ class PollingService
     {
         $open = Generation::whereIn('status', [GenerationStatus::Queued, GenerationStatus::Processing])
             ->whereNotNull('provider_id')
+            // Only the current key can see them: under another key a 404 would wrongly fail them locally.
+            ->where('api_key_fingerprint', $this->client->apiKeyFingerprint())
             ->when(! $force, fn ($q) => $q->where(fn ($q) => $q->whereNull('last_synced_at')->orWhere('last_synced_at', '<=', now()->subSeconds(self::STALE_AFTER_SECONDS))))
             ->orderByRaw('last_synced_at asc nulls first')
             ->limit(self::MAX_PER_RUN)

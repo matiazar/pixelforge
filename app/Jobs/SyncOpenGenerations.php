@@ -9,6 +9,7 @@ use Illuminate\Foundation\Queue\Queueable;
 
 /**
  * Scheduled every 10 seconds: polling backup for webhooks.
+ * $force (admin "Sync pending") also asks about generations synced moments ago.
  */
 class SyncOpenGenerations implements ShouldBeUniqueUntilProcessing, ShouldQueue
 {
@@ -16,8 +17,18 @@ class SyncOpenGenerations implements ShouldBeUniqueUntilProcessing, ShouldQueue
 
     public int $tries = 1;
 
+    public function __construct(public bool $force = false) {}
+
+    /**
+     * A queued scheduled run must not swallow the admin's forced one.
+     */
+    public function uniqueId(): string
+    {
+        return $this->force ? 'force' : 'scheduled';
+    }
+
     public function handle(PollingService $polling): void
     {
-        $polling->syncOpen();
+        $polling->syncOpen($this->force);
     }
 }

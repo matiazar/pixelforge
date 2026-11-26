@@ -4,6 +4,7 @@ use App\Enums\GenerationStatus;
 use App\Models\Generation;
 use App\Models\User;
 use App\Services\LedgerService;
+use App\Services\Pixelforge\PixelforgeClient;
 use App\Services\PollingService;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Exceptions;
@@ -23,6 +24,7 @@ function openGeneration(User $user, string $providerId, array $attributes = []):
     $generation = Generation::factory()->for($user)->create($attributes + [
         'status' => GenerationStatus::Processing,
         'provider_id' => $providerId,
+        'api_key_fingerprint' => app(PixelforgeClient::class)->apiKeyFingerprint(),
         'rates' => ['input_text_tokens' => '5.00', 'input_image_tokens' => '10.00', 'output_tokens' => '40.00', 'reasoning_tokens' => '12.50'],
         'last_synced_at' => now()->subSeconds(20),
     ]);
@@ -121,6 +123,15 @@ it('fails locally and releases the hold when the provider no longer knows the ge
     expect($fresh->status)->toBe(GenerationStatus::Failed)
         ->and($fresh->error_code)->toBe('not_found_at_provider')
         ->and($this->user->fresh()->balance_nano)->toBe(5_000_000_000);
+});
+
+it('leaves generations sent with another API key alone (a 404 there does not mean lost)', function () {
+    $oldKey = openGeneration($this->user, 'gen_old_key', ['api_key_fingerprint' => 'old_key_print']);
+    Http::fake();
+
+    expect($this->polling->syncOpen(force: true))->toBe(0)
+        ->and($oldKey->fresh()->status)->toBe(GenerationStatus::Processing);
+    Http::assertNothingSent();
 });
 
 it('also syncs recently synced generations when forced (admin "Sync pending")', function () {

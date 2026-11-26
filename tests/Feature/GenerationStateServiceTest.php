@@ -3,6 +3,7 @@
 use App\Enums\GenerationStatus;
 use App\Models\Generation;
 use App\Models\LedgerEntry;
+use App\Models\Setting;
 use App\Models\User;
 use App\Services\GenerationStateService;
 use App\Services\LedgerService;
@@ -164,3 +165,13 @@ it('refuses a payload whose provider id differs from the stored one', function (
 
     $this->state->apply($this->generation->fresh(), remote('succeeded', ['id' => 'gen_other']));
 })->throws(InvalidArgumentException::class);
+
+it('charges with the markup stored on the generation, not the one in force now', function () {
+    $generation = Generation::factory()->for($this->user)->create(['estimate_max_nano' => 600_000_000, 'markup_percent' => 40]);
+    app(LedgerService::class)->hold($generation);
+    Setting::put('markup_percent', '0');
+
+    $this->state->apply($generation, remote('succeeded'));
+
+    expect($generation->fresh()->price_nano)->toBe(427_714_000); // 305_510_000 + 40%
+});

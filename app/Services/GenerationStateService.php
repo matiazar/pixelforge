@@ -172,7 +172,7 @@ class GenerationStateService
         /** @var array<string, int> $usage */
         $usage = (array) ($remote['usage'] ?? []);
         $cost = $this->pricing->costFromUsage($usage, (array) $generation->rates);
-        $price = $this->pricing->priceFor($cost);
+        $price = $this->pricing->priceFor($cost, $generation->markup_percent);
 
         $generation->fill([
             'status' => GenerationStatus::Succeeded,

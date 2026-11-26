@@ -52,5 +52,8 @@
 - Etapa 7: registro cerrado: GET /register redirige a login con aviso, POST /register 403; el link "Sign up" se oculta (prop compartido registrationOpen)
 - Etapa 7: el limite diario sigue contando el dia UTC (spec), la zona horaria de ajustes solo afecta el reporte
 - Etapa 7: pendiente: avisos de hidratacion del sidebar del kit en viewport angosto (tambien en Credits, no de esta etapa)
+- Etapa 7 (fixes del review): Sync pending ahora encola un polling forzado (job unico aparte del programado) + el despachador, throttle 1/min; polling solo de la API key actual; match de conciliacion exige costo y cantidad; settings guardados en transaccion. El agrupado por completed_at es correcto (Pixelforge factura por dia UTC de completado). El chequeo de 366 dias con DST no aplica: un rango de 367 dias cruza los dos cambios de hora
+- Etapa 7: markup editable con snapshot por generacion (DEC-011), cache en Redis con settings cacheados hasta editarlos (DEC-012)
+- Entorno local: PHP 8.4.28 NTS en D:\Laragon\bin\php\php-8.4.28-nts-Win32-vs17-x64 (el lock pide >= 8.4.1; el PHP del PATH es 8.3.9)
 
-Ultima actualizacion: etapa 7 completa
+Ultima actualizacion: etapa 7 completa + fixes del review

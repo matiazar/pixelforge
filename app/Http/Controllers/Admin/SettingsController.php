@@ -20,6 +20,7 @@ class SettingsController extends Controller
                 'timezone' => Setting::get('timezone'),
                 'daily_limit' => (int) Setting::get('daily_limit'),
                 'registration_open' => Setting::get('registration_open') === '1',
+                'markup_percent' => (int) Setting::get('markup_percent'),
             ],
             'timezones' => DateTimeZone::listIdentifiers(),
         ]);
@@ -27,9 +28,12 @@ class SettingsController extends Controller
 
     public function update(UpdateAppSettingsRequest $request): RedirectResponse
     {
-        Setting::put('timezone', $request->string('timezone')->toString());
-        Setting::put('daily_limit', (string) $request->integer('daily_limit'));
-        Setting::put('registration_open', $request->boolean('registration_open') ? '1' : '0');
+        Setting::putMany([
+            'timezone' => $request->string('timezone')->toString(),
+            'daily_limit' => (string) $request->integer('daily_limit'),
+            'registration_open' => $request->boolean('registration_open') ? '1' : '0',
+            'markup_percent' => (string) $request->integer('markup_percent'),
+        ]);
 
         return back()->with('status', 'Settings saved.');
     }

@@ -9,12 +9,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\AdminRequest;
 use App\Http\Requests\Admin\ReconciliationRequest;
 use App\Jobs\DispatchPendingGenerations;
-use App\Services\PollingService;
+use App\Jobs\SyncOpenGenerations;
 use App\Services\ReportService;
 use App\Support\Money;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 use InvalidArgumentException;
@@ -34,7 +33,7 @@ class ReconciliationController extends Controller
                 'our_cost' => Money::format($r['our_cost_nano']),
                 'provider_cost' => Money::format($r['provider_cost_nano']),
                 'difference' => Money::format($r['difference_nano']),
-                'matches' => $r['difference_nano'] === 0,
+                'matches' => $r['difference_nano'] === 0 && $r['our_generations'] === $r['provider_generations'],
             ], $report->reconciliation($request->from(), $request->to()));
         } catch (ProviderRejected|ProviderUnavailable|ApiThrottled $e) {
             // Shown on the page; never rendered as an empty (matching) table.
@@ -55,15 +54,15 @@ class ReconciliationController extends Controller
     }
 
     /**
-     * "Sync pending": runs the polling backup now (also on generations polled
-     * seconds ago). The dispatcher pass, which reconciles ambiguous sends and
-     * can take several provider round trips, is queued instead of blocking the request.
+     * "Sync pending": a forced polling pass (also on generations polled seconds
+     * ago) and a dispatcher pass for ambiguous sends. Both are queued: each can
+     * take many provider round trips of up to the client timeout.
      */
-    public function sync(AdminRequest $request, PollingService $polling): RedirectResponse
+    public function sync(AdminRequest $request): RedirectResponse
     {
-        $synced = $polling->syncOpen(force: true);
+        SyncOpenGenerations::dispatch(force: true);
         DispatchPendingGenerations::dispatch();
 
-        return back()->with('status', 'Synced '.$synced.' open '.Str::plural('generation', $synced).' with Pixelforge. Ambiguous sends are being checked in the background.');
+        return back()->with('status', 'Sync started: open generations and ambiguous sends are being checked with Pixelforge in the background.');
     }
 }

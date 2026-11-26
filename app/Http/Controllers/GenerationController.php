@@ -41,7 +41,7 @@ class GenerationController extends Controller
     public function estimate(EstimateGenerationRequest $request, PricingService $pricing): JsonResponse
     {
         $draft = $request->draft();
-        $estimate = $pricing->estimate($draft['prompt'], $draft['size'], $draft['quality'], $draft['reference_count'], $pricing->currentTable());
+        $estimate = $pricing->estimate($draft['prompt'], $draft['size'], $draft['quality'], $draft['reference_count'], $pricing->currentTable(), $pricing->markupPercent());
 
         return response()->json($estimate->formattedPrice());
     }

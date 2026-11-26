@@ -27,6 +27,7 @@ class GenerationFactory extends Factory
             'status' => GenerationStatus::Pending,
             'estimate_min_nano' => 14_000_000,
             'estimate_max_nano' => 21_906_250,
+            'markup_percent' => 25,
             'next_attempt_at' => now(),
         ];
     }

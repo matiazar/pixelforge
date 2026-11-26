@@ -32,7 +32,7 @@ Confirmados por el usuario: rango de estimado; el usuario ve solo su precio; col
 Asumidos (revisar):
 
 1. Limite diario: 20 generaciones por usuario por dia (UTC), editable en ajustes.
-2. Ajustes globales: zona horaria (default UTC), limite diario, registro abierto si/no. El 25% queda fijo en config, no editable.
+2. Ajustes globales: zona horaria (default UTC), limite diario, registro abierto si/no, markup (default 25%, se guarda en cada generacion; DEC-011).
 3. Paquetes de credito ficticio: 5, 10 y 20 USD. Usuario nuevo arranca en 0.
 4. Cuenta demo y cuenta admin creadas por seeder; contrasenas desde .env, nunca en el repo.
 5. Montos en pantalla en USD con hasta 9 decimales, minimo 2, sin redondear.
@@ -45,7 +45,7 @@ Asumidos (revisar):
 
 - Laravel 13 + Vue 3 + Inertia, starter kit oficial de Vue (TypeScript, Tailwind, shadcn-vue). Lo exige la consigna y el kit trae auth.
 - PostgreSQL. Transacciones y locks de fila, agrupacion por zona horaria.
-- Cola con driver database + scheduler. Sin Redis: menos piezas para el volumen esperado.
+- Cola con driver database + scheduler. Cache en Redis (DEC-012).
 - VPS propio: Apache (vhost + mod_rewrite), PHP-FPM, Supervisor (worker), cron (schedule:run), Let's Encrypt.
 - Pest.
 

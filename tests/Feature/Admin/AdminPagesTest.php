@@ -2,10 +2,10 @@
 
 use App\Enums\GenerationStatus;
 use App\Jobs\DispatchPendingGenerations;
+use App\Jobs\SyncOpenGenerations;
 use App\Models\Generation;
 use App\Models\Setting;
 use App\Models\User;
-use App\Services\LedgerService;
 use App\Services\Pixelforge\PixelforgeClient;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Http;
@@ -152,34 +152,38 @@ it('rejects a reconciliation range over the provider maximum of 92 days', functi
     Http::assertNothingSent();
 });
 
-it('syncs open generations now, even ones polled seconds ago', function () {
-    app(LedgerService::class)->topUp($this->user, 5_000_000_000);
-    $open = Generation::factory()->for($this->user)->create([
-        'status' => GenerationStatus::Processing,
-        'provider_id' => 'gen_open',
-        'api_key_fingerprint' => app(PixelforgeClient::class)->apiKeyFingerprint(),
-        'rates' => ['input_text_tokens' => '5.00', 'input_image_tokens' => '10.00', 'output_tokens' => '40.00', 'reasoning_tokens' => '12.50'],
-        'last_synced_at' => now()->subSecond(),
-    ]);
-    app(LedgerService::class)->hold($open);
-
-    Http::fake(['pf.test/v1/generations/gen_open' => Http::response([
-        'id' => 'gen_open',
-        'status' => 'succeeded',
-        'metadata' => ['local_id' => $open->id],
-        'usage' => ['input_text_tokens' => 5, 'input_image_tokens' => 0, 'output_tokens' => 280, 'reasoning_tokens' => 100, 'total_tokens' => 385],
-        'image_url' => 'https://img.test/a.png',
-        'completed_at' => now()->toIso8601ZuluString(),
-    ])]);
+it('queues a forced sync and the dispatcher instead of calling Pixelforge in the request', function () {
+    Http::fake();
 
     $this->actingAs($this->admin)
         ->post(route('admin.reconciliation.sync'))
         ->assertRedirect()
-        ->assertSessionHas('status', 'Synced 1 open generation with Pixelforge. Ambiguous sends are being checked in the background.');
+        ->assertSessionHas('status', 'Sync started: open generations and ambiguous sends are being checked with Pixelforge in the background.');
 
-    expect($open->fresh()->status)->toBe(GenerationStatus::Succeeded);
-    // The dispatcher (which reconciles ambiguous sends) runs on the queue, not in the request.
+    Http::assertNothingSent();
+    Queue::assertPushed(SyncOpenGenerations::class, fn (SyncOpenGenerations $job) => $job->force === true);
     Queue::assertPushed(DispatchPendingGenerations::class);
+});
+
+it('allows one sync per minute so it cannot use up the shared Pixelforge budget', function () {
+    $this->actingAs($this->admin)->post(route('admin.reconciliation.sync'))->assertRedirect();
+    $this->actingAs($this->admin)->post(route('admin.reconciliation.sync'))->assertTooManyRequests();
+});
+
+it('does not mark a day as matching when the cost matches but the count does not', function () {
+    chargedGeneration($this->user, '2026-11-26 10:00:00', 104_770_000, 130_962_500);
+    Http::fake(['pf.test/v1/usage*' => Http::response([
+        'object' => 'usage',
+        'data' => [['date' => '2026-11-26', 'generations' => 2, 'cost_usd' => '0.104770000']],
+        'total' => ['generations' => 2, 'cost_usd' => '0.104770000'],
+    ])]);
+
+    $this->actingAs($this->admin)
+        ->get(route('admin.reconciliation', ['from' => '2026-11-26', 'to' => '2026-11-26']))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('rows.0.difference', '0.00')
+            ->where('rows.0.matches', false));
 });
 
 it('shows the global settings with their defaults', function () {
@@ -188,7 +192,7 @@ it('shows the global settings with their defaults', function () {
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page
             ->component('admin/Settings')
-            ->where('settings', ['timezone' => 'UTC', 'daily_limit' => 20, 'registration_open' => true])
+            ->where('settings', ['timezone' => 'UTC', 'daily_limit' => 20, 'registration_open' => true, 'markup_percent' => 25])
             ->has('timezones'));
 });
 
@@ -198,18 +202,20 @@ it('updates the global settings', function () {
             'timezone' => 'America/Argentina/Buenos_Aires',
             'daily_limit' => 7,
             'registration_open' => false,
+            'markup_percent' => 40,
         ])
         ->assertRedirect()
         ->assertSessionHas('status', 'Settings saved.');
 
     expect(Setting::get('timezone'))->toBe('America/Argentina/Buenos_Aires')
         ->and(Setting::get('daily_limit'))->toBe('7')
-        ->and(Setting::get('registration_open'))->toBe('0');
+        ->and(Setting::get('registration_open'))->toBe('0')
+        ->and(Setting::get('markup_percent'))->toBe('40');
 });
 
 it('rejects invalid settings', function (array $data, string $field) {
     $this->actingAs($this->admin)
-        ->put(route('admin.settings.update'), $data + ['timezone' => 'UTC', 'daily_limit' => 5, 'registration_open' => true])
+        ->put(route('admin.settings.update'), $data + ['timezone' => 'UTC', 'daily_limit' => 5, 'registration_open' => true, 'markup_percent' => 25])
         ->assertSessionHasErrors($field);
 
     expect(Setting::query()->count())->toBe(0);
@@ -219,6 +225,10 @@ it('rejects invalid settings', function (array $data, string $field) {
     'huge limit' => [['daily_limit' => 100_000], 'daily_limit'],
     'decimal limit' => [['daily_limit' => '2.5'], 'daily_limit'],
     'not a boolean' => [['registration_open' => 'maybe'], 'registration_open'],
+    'negative markup' => [['markup_percent' => -1], 'markup_percent'],
+    'markup over 100' => [['markup_percent' => 101], 'markup_percent'],
+    'decimal markup' => [['markup_percent' => '12.5'], 'markup_percent'],
+    'missing markup' => [['markup_percent' => null], 'markup_percent'],
 ]);
 
 it('closes registration when the setting says so', function () {

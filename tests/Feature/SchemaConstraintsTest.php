@@ -4,6 +4,7 @@ use App\Models\Generation;
 use App\Models\LedgerEntry;
 use App\Models\User;
 use App\Models\WebhookEvent;
+use Illuminate\Database\QueryException;
 use Illuminate\Database\UniqueConstraintViolationException;
 
 it('gives users a zero balance and no admin flag by default', function () {
@@ -65,3 +66,7 @@ it('stores money columns as exact 64-bit integers', function () {
 
     expect($generation->fresh()->estimate_max_nano)->toBe(9_000_000_000_000);
 });
+
+it('requires every generation to carry the markup it is priced with', function () {
+    Generation::factory()->create(['markup_percent' => null]);
+})->throws(QueryException::class);

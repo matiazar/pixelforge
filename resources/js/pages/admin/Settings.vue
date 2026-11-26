@@ -12,6 +12,7 @@ defineProps<{
         timezone: string;
         daily_limit: number;
         registration_open: boolean;
+        markup_percent: number;
     };
     timezones: string[];
 }>();
@@ -38,8 +39,7 @@ const selectClass =
         <header>
             <h1 class="text-2xl font-semibold tracking-tight">App settings</h1>
             <p class="mt-1 text-sm text-muted-foreground">
-                Apply to every user. The 25% margin over the Pixelforge cost is
-                fixed and not editable.
+                Apply to every user.
             </p>
         </header>
 
@@ -90,6 +90,29 @@ const selectClass =
                     Images a user can send per UTC day.
                 </p>
                 <InputError :message="errors.daily_limit" />
+            </div>
+
+            <div class="grid gap-2">
+                <Label for="markup_percent"
+                    >Markup over Pixelforge cost (%)</Label
+                >
+                <Input
+                    id="markup_percent"
+                    name="markup_percent"
+                    type="number"
+                    min="0"
+                    max="100"
+                    step="1"
+                    inputmode="numeric"
+                    :default-value="settings.markup_percent"
+                    class="w-32 tabular-nums"
+                    required
+                />
+                <p class="text-sm text-muted-foreground">
+                    Applies to new generations. Ones already created keep the
+                    markup they were estimated and held with.
+                </p>
+                <InputError :message="errors.markup_percent" />
             </div>
 
             <div class="grid gap-2">

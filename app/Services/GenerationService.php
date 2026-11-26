@@ -60,9 +60,11 @@ class GenerationService
     {
         // HTTP (pricing table) stays outside the transaction.
         $table = $this->pricing->currentTable();
-        $estimate = $this->pricing->estimate($payload['prompt'], $payload['size'], $payload['quality'], count($payload['reference_images']), $table);
+        // Read once: the hold and the final charge must use the same markup.
+        $markup = $this->pricing->markupPercent();
+        $estimate = $this->pricing->estimate($payload['prompt'], $payload['size'], $payload['quality'], count($payload['reference_images']), $table, $markup);
 
-        return DB::transaction(function () use ($user, $payload, $formToken, $retryOf, $estimate) {
+        return DB::transaction(function () use ($user, $payload, $formToken, $retryOf, $estimate, $markup) {
             $locked = User::whereKey($user->id)->lockForUpdate()->firstOrFail();
 
             $existing = $retryOf !== null
@@ -94,6 +96,7 @@ class GenerationService
                 'status' => GenerationStatus::Pending,
                 'estimate_min_nano' => $estimate->priceMin,
                 'estimate_max_nano' => $estimate->priceMax,
+                'markup_percent' => $markup,
                 'next_attempt_at' => now(),
             ]);
 

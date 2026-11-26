@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Exceptions\InvalidMarkupSetting;
 use App\Exceptions\UnsupportedRate;
+use App\Models\Setting;
 use App\Support\Money;
 use App\Support\PriceEstimate;
 use Illuminate\Support\Facades\Cache;
@@ -78,7 +80,7 @@ class PricingService
     /**
      * @param  array{rates: array<string, string>, tokens: array<string, mixed>}  $table
      */
-    public function estimate(string $prompt, string $size, string $quality, int $referenceCount, array $table): PriceEstimate
+    public function estimate(string $prompt, string $size, string $quality, int $referenceCount, array $table, int $markupPercent): PriceEstimate
     {
         if ($referenceCount < 0 || $referenceCount > self::MAX_REFERENCES) {
             throw new InvalidArgumentException('Reference count must be 0..'.self::MAX_REFERENCES.", got [{$referenceCount}]");
@@ -109,8 +111,8 @@ class PricingService
         return new PriceEstimate(
             costMin: $costMin,
             costMax: $costMax,
-            priceMin: $this->priceFor($costMin),
-            priceMax: $this->priceFor($costMax),
+            priceMin: $this->priceFor($costMin, $markupPercent),
+            priceMax: $this->priceFor($costMax, $markupPercent),
         );
     }
 
@@ -140,10 +142,27 @@ class PricingService
 
     /**
      * What the user pays: provider cost + markup, rounded up to the nano.
+     * The markup is the one stored on the generation, never read here.
      */
-    public function priceFor(int $costNano): int
+    public function priceFor(int $costNano, int $markupPercent): int
     {
-        return Money::withMarkup($costNano, (int) config('pixelforge.markup_percent'));
+        return Money::withMarkup($costNano, $markupPercent);
+    }
+
+    /**
+     * Markup in force now (admin setting). Read once per generation and stored
+     * on it. A stored value that is not a whole percent 0..100 is refused
+     * instead of cast: (int) '' would silently charge cost only.
+     */
+    public function markupPercent(): int
+    {
+        $stored = Setting::get('markup_percent');
+
+        if (! ctype_digit($stored) || (int) $stored > 100) {
+            throw InvalidMarkupSetting::for($stored);
+        }
+
+        return (int) $stored;
     }
 
     /**

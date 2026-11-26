@@ -36,7 +36,7 @@ it('accepts the numeric variance the API returns', function () {
     Http::fake(['*/v1/pricing' => Http::response(livePricing())]);
     $pricing = app(PricingService::class);
 
-    $estimate = $pricing->estimate(str_repeat('a', 400), '1536x1024', 'high', 2, $pricing->currentTable());
+    $estimate = $pricing->estimate(str_repeat('a', 400), '1536x1024', 'high', 2, $pricing->currentTable(), 25);
 
     expect($estimate->costMax)->toBe(373_875_000);
 });
