@@ -1,7 +1,16 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { ImagePlus, Wallet } from '@lucide/vue';
+import {
+    ChartColumn,
+    ImagePlus,
+    Scale,
+    SlidersHorizontal,
+    Wallet,
+} from '@lucide/vue';
 import { computed } from 'vue';
+import { index as reconciliation } from '@/actions/App/Http/Controllers/Admin/ReconciliationController';
+import { index as report } from '@/actions/App/Http/Controllers/Admin/ReportController';
+import { edit as adminSettings } from '@/actions/App/Http/Controllers/Admin/SettingsController';
 import { index as credits } from '@/actions/App/Http/Controllers/CreditsController';
 import AppLogo from '@/components/AppLogo.vue';
 import NavMain from '@/components/NavMain.vue';
@@ -31,8 +40,16 @@ const mainNavItems: NavItem[] = [
     },
 ];
 
+// Shown only to admins; the server enforces access on every admin route.
+const adminNavItems: NavItem[] = [
+    { title: 'Report', href: report(), icon: ChartColumn },
+    { title: 'Reconciliation', href: reconciliation(), icon: Scale },
+    { title: 'App settings', href: adminSettings(), icon: SlidersHorizontal },
+];
+
 const page = usePage();
 const balance = computed(() => page.props.balance);
+const isAdmin = computed(() => page.props.auth.user?.is_admin === true);
 </script>
 
 <template>
@@ -51,6 +68,7 @@ const balance = computed(() => page.props.balance);
 
         <SidebarContent>
             <NavMain :items="mainNavItems" />
+            <NavMain v-if="isAdmin" :items="adminNavItems" label="Admin" />
         </SidebarContent>
 
         <SidebarFooter>

@@ -8,7 +8,7 @@
 - [COMPLETA] Etapa 4: Webhooks + polling + reconciliacion (commit: 18c4f00)
 - [COMPLETA] Etapa 5: Formulario e historial (commit: d7ca4ab)
 - [COMPLETA] Etapa 6: Saldos (commit: 12f740d)
-- [PENDIENTE] Etapa 7: Admin, ajustes, conciliacion
+- [COMPLETA] Etapa 7: Admin, ajustes, conciliacion (commit: el de mensaje init(etapa 7), ver git log)
 - [PENDIENTE] Etapa 8: README, datos demo, verificacion final local
 - [PENDIENTE] Etapa 9: Deploy en VPS (lo hace el usuario: Virtualmin + Apache, pixelforge.mazar.com.ar) y entrega
 
@@ -44,5 +44,13 @@
 - Etapa 6: InsufficientBalance y DailyLimitReached ya no se reportan (en produccion habrian mandado mail al admin por cada usuario sin saldo)
 - Etapa 6: palabras magicas probadas contra la API real (solo polling, sin tunel): [succeed] y [slow] cobradas dentro del rango; [fail], [blocked] y [overloaded] fallidas sin cobro; [duplicate] fallo al azar del proveedor (sin cobro). Saldo final exacto. Webhooks reales quedan para el deploy
 - Repo GitHub privado `pixelforge` (pedido del usuario); pasa a publico para la entrega
+- Etapa 7: area admin con gate `admin` (is_admin) en rutas (`can:admin`) y FormRequests; no admin = 403. Items del menu admin solo para admins
+- Etapa 7: reporte por defecto ultimos 30 dias en la zona de ajustes (maximo 366); conciliacion por defecto ultimos 7 dias UTC (maximo 92, el de la API)
+- Etapa 7: supuesto: Pixelforge asigna el costo de /v1/usage al dia UTC de completed_at (coincidio exacto con la API real: 3 generaciones, 0.10477)
+- Etapa 7: "Sync pending" consulta ya las abiertas (aunque se hayan consultado hace segundos) y encola el despachador (reconcilia envios ambiguos) en vez de correrlo dentro del request
+- Etapa 7: "abiertas en Pixelforge" cuenta queued/processing y pending con envio ambiguo, solo de la API key actual
+- Etapa 7: registro cerrado: GET /register redirige a login con aviso, POST /register 403; el link "Sign up" se oculta (prop compartido registrationOpen)
+- Etapa 7: el limite diario sigue contando el dia UTC (spec), la zona horaria de ajustes solo afecta el reporte
+- Etapa 7: pendiente: avisos de hidratacion del sidebar del kit en viewport angosto (tambien en Credits, no de esta etapa)
 
-Ultima actualizacion: etapa 6 completa
+Ultima actualizacion: etapa 7 completa

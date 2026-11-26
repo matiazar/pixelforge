@@ -2,6 +2,7 @@
 
 use App\Exceptions\DailyLimitReached;
 use App\Exceptions\InsufficientBalance;
+use App\Http\Middleware\EnsureRegistrationIsOpen;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Support\ErrorReporter;
@@ -28,6 +29,7 @@ return Application::configure(basePath: dirname(__DIR__))
             HandleAppearance::class,
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
+            EnsureRegistrationIsOpen::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

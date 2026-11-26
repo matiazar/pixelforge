@@ -22,6 +22,7 @@ declare module '@inertiajs/core' {
             sidebarOpen: boolean;
             flash: { status: string | null };
             balance: string | null;
+            registrationOpen: boolean;
             [key: string]: unknown;
         };
     }

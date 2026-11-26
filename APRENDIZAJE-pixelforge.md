@@ -76,3 +76,15 @@ Conceptos nuevos:
 Donde verlo en el codigo: `app/Http/Middleware/HandleInertiaRequests.php:46`, `app/Models/User.php:38`, `bootstrap/app.php:32`
 
 Para practicar: agregar un test que verifique que un usuario con saldo negativo ve el aviso en la pagina Credits y no puede generar.
+
+## Etapa 7: Admin, ajustes, conciliacion
+
+Conceptos nuevos:
+
+- Gate + middleware `can:`: `Gate::define('admin', ...)` define el permiso una vez; las rutas lo piden con `->middleware('can:admin')` y los FormRequests lo repiten en `authorize()`. Defensa doble: si alguien agrega una ruta admin fuera del grupo, el request igual la frena.
+- `after()` en un FormRequest: validaciones que miran varios campos ya parseados (rango invertido, rango demasiado largo) sin escribir una Rule aparte.
+- Agrupar por dia en otra zona horaria en Postgres: `(completed_at AT TIME ZONE 'UTC') AT TIME ZONE ?` para el dia, y el filtro como rango UTC medio abierto para que use el indice.
+
+Donde verlo en el codigo: `app/Providers/AppServiceProvider.php:31`, `app/Http/Requests/Admin/DateRangeRequest.php:35`, `app/Services/ReportService.php:19`
+
+Para practicar: agregar al reporte una columna "fallidas" por dia (generaciones failed, sin cobro) con su test en `ReportServiceTest`.

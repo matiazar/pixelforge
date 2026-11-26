@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Setting;
 use App\Support\Money;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -44,6 +45,7 @@ class HandleInertiaRequests extends Middleware
             ],
             // Formatted on the server: the browser never does money math.
             'balance' => fn () => $request->user() ? Money::format($request->user()->balance_nano) : null,
+            'registrationOpen' => fn () => Setting::get('registration_open') === '1',
             'flash' => [
                 'status' => fn () => $request->session()->get('status'),
             ],

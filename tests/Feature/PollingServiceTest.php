@@ -122,3 +122,11 @@ it('fails locally and releases the hold when the provider no longer knows the ge
         ->and($fresh->error_code)->toBe('not_found_at_provider')
         ->and($this->user->fresh()->balance_nano)->toBe(5_000_000_000);
 });
+
+it('also syncs recently synced generations when forced (admin "Sync pending")', function () {
+    $recent = openGeneration($this->user, 'gen_recent', ['last_synced_at' => now()->subSeconds(2)]);
+    Http::fake(['pf.test/v1/generations/gen_recent' => Http::response(polledSuccess($recent))]);
+
+    expect($this->polling->syncOpen(force: true))->toBe(1)
+        ->and($recent->fresh()->status)->toBe(GenerationStatus::Succeeded);
+});

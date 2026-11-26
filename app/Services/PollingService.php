@@ -30,12 +30,13 @@ class PollingService
 
     /**
      * Returns how many generations were looked up successfully.
+     * $force (admin "Sync pending") also asks about the ones synced moments ago.
      */
-    public function syncOpen(): int
+    public function syncOpen(bool $force = false): int
     {
         $open = Generation::whereIn('status', [GenerationStatus::Queued, GenerationStatus::Processing])
             ->whereNotNull('provider_id')
-            ->where(fn ($q) => $q->whereNull('last_synced_at')->orWhere('last_synced_at', '<=', now()->subSeconds(self::STALE_AFTER_SECONDS)))
+            ->when(! $force, fn ($q) => $q->where(fn ($q) => $q->whereNull('last_synced_at')->orWhere('last_synced_at', '<=', now()->subSeconds(self::STALE_AFTER_SECONDS))))
             ->orderByRaw('last_synced_at asc nulls first')
             ->limit(self::MAX_PER_RUN)
             ->get();
