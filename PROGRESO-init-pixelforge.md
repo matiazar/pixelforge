@@ -6,7 +6,7 @@
 - [COMPLETA] Etapa 2: Money + Pricing + tests (commit: cf732c5)
 - [COMPLETA] Etapa 3: Cliente, alta, despachador, estado, ledger (commit: 1248fe3)
 - [COMPLETA] Etapa 4: Webhooks + polling + reconciliacion (commit: 18c4f00)
-- [COMPLETA] Etapa 5: Formulario e historial (commit: pendiente)
+- [COMPLETA] Etapa 5: Formulario e historial (commit: d7ca4ab)
 - [PENDIENTE] Etapa 6: Saldos
 - [PENDIENTE] Etapa 7: Admin, ajustes, conciliacion
 - [PENDIENTE] Etapa 8: README, datos demo, verificacion final local
@@ -37,6 +37,7 @@
 - Etapa 5: seeder de cuentas admin y demo adelantado de la etapa 8 (demo arranca con 20 USD ficticios; si el mail de admin ya esta registrado sin admin, el seeder falla en vez de promoverlo)
 - Etapa 5: reintento = generacion nueva con el mismo pedido, precio re-estimado con las tarifas actuales, mismos chequeos de limite diario y saldo
 - Etapa 5: estimado en vivo con debounce 400 ms y throttle 120/min por usuario
+- Etapa 5 (arreglo pedido por el usuario): borrar cuenta sacado del perfil (ruta, accion, request, componente). Fuera de alcance en el spec: borraria registros de dinero. El admin borrado en local se recreo con el seeder
 - Etapa 5: links del kit (Repository, Documentation) sacados del menu; item "Dashboard" renombrado "Create"
 - Pendiente etapa 6: prueba de palabras magicas contra la API real. La cuenta de prueba creada en local tiene saldo 0 y no hay como cargarle credito hasta "Buy credits"; las contrasenas del seeder en .env no las leo
 - Repo GitHub privado `pixelforge` (pedido del usuario); pasa a publico para la entrega
