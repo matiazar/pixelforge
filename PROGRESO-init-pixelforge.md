@@ -9,7 +9,7 @@
 - [COMPLETA] Etapa 5: Formulario e historial (commit: d7ca4ab)
 - [COMPLETA] Etapa 6: Saldos (commit: 12f740d)
 - [COMPLETA] Etapa 7: Admin, ajustes, conciliacion (commit: el de mensaje init(etapa 7), ver git log)
-- [COMPLETA] Etapa 8: README, datos demo (pixelforge:demo), verificacion final local con la API real (commit: HASH8)
+- [COMPLETA] Etapa 8: README, datos demo (pixelforge:demo), verificacion final local con la API real (commit: 1f567a7)
 - [PENDIENTE] Etapa 9: Deploy en VPS (lo hace el usuario: Virtualmin + Apache, pixelforge.mazar.com.ar) y entrega
 
 ## Decisiones tomadas sin el usuario
