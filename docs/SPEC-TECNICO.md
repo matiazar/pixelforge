@@ -237,3 +237,4 @@ Rangos con desarrollo asistido por agente, incluyendo tu revision. Poco margen d
 - 2026-11-26: aprobado. Servidor web del VPS: Apache (no Nginx).
 - 2026-11-26: etapa 3: estado local `pending`; form_token unico por usuario; cuota diaria agotada falla las pendientes no ambiguas en el acto; despachador con maximo 5 intentos por corrida. Detalle de la API en docs/API-PIXELFORGE.md.
 - 2026-11-26: deploy movido a la ultima etapa (pedido del usuario); VPS Virtualmin, dominio pixelforge.mazar.com.ar; repo privado.
+- 2026-11-26: etapa 5: reintento re-estima con tarifas actuales; seeder de cuentas adelantado; estimado con throttle 120/min. Prueba de palabras magicas pasa a la etapa 6 (hace falta saldo).

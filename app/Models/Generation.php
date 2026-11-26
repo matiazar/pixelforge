@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @property string $id
@@ -88,5 +89,13 @@ class Generation extends Model
     public function retryOf(): BelongsTo
     {
         return $this->belongsTo(Generation::class, 'retry_of_id');
+    }
+
+    /**
+     * @return HasOne<Generation, $this>
+     */
+    public function retriedBy(): HasOne
+    {
+        return $this->hasOne(Generation::class, 'retry_of_id');
     }
 }

@@ -10,6 +10,7 @@ use App\Models\Generation;
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class GenerationService
 {
@@ -29,17 +30,44 @@ class GenerationService
      */
     public function create(User $user, array $data): Generation
     {
-        $references = array_values($data['reference_images'] ?? []);
+        $payload = [
+            'prompt' => $data['prompt'],
+            'size' => $data['size'],
+            'quality' => $data['quality'],
+            'reference_images' => array_values($data['reference_images'] ?? []),
+        ];
 
+        // Double submit: same form token, same user -> the generation already created.
+        return $this->open($user, $payload, $data['form_token'], null);
+    }
+
+    /**
+     * New generation with the same request as a failed one: new id, key and hold.
+     * retry_of_id is unique, so a double click returns the first retry.
+     */
+    public function retry(User $user, Generation $failed): Generation
+    {
+        /** @var array{prompt: string, size: string, quality: string, reference_images: array<int, string>} $payload */
+        $payload = $failed->request_payload;
+
+        return $this->open($user, $payload, (string) Str::uuid(), $failed);
+    }
+
+    /**
+     * @param  array{prompt: string, size: string, quality: string, reference_images: array<int, string>}  $payload
+     */
+    private function open(User $user, array $payload, string $formToken, ?Generation $retryOf): Generation
+    {
         // HTTP (pricing table) stays outside the transaction.
         $table = $this->pricing->currentTable();
-        $estimate = $this->pricing->estimate($data['prompt'], $data['size'], $data['quality'], count($references), $table);
+        $estimate = $this->pricing->estimate($payload['prompt'], $payload['size'], $payload['quality'], count($payload['reference_images']), $table);
 
-        return DB::transaction(function () use ($user, $data, $references, $estimate) {
+        return DB::transaction(function () use ($user, $payload, $formToken, $retryOf, $estimate) {
             $locked = User::whereKey($user->id)->lockForUpdate()->firstOrFail();
 
-            // Double submit: same form token, same user -> the generation already created.
-            $existing = Generation::where('form_token', $data['form_token'])->where('user_id', $user->id)->first();
+            $existing = $retryOf !== null
+                ? Generation::where('retry_of_id', $retryOf->id)->first()
+                : Generation::where('form_token', $formToken)->where('user_id', $user->id)->first();
 
             if ($existing !== null) {
                 return $existing;
@@ -60,13 +88,9 @@ class GenerationService
 
             $generation = Generation::create([
                 'user_id' => $user->id,
-                'form_token' => $data['form_token'],
-                'request_payload' => [
-                    'prompt' => $data['prompt'],
-                    'size' => $data['size'],
-                    'quality' => $data['quality'],
-                    'reference_images' => $references,
-                ],
+                'form_token' => $formToken,
+                'retry_of_id' => $retryOf?->id,
+                'request_payload' => $payload,
                 'status' => GenerationStatus::Pending,
                 'estimate_min_nano' => $estimate->priceMin,
                 'estimate_max_nano' => $estimate->priceMax,

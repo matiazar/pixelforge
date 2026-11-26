@@ -50,3 +50,17 @@ Conceptos nuevos:
 Donde verlo en el codigo: `app/Services/WebhookService.php:64`, `app/Services/PollingService.php:42`, `bootstrap/app.php:17`
 
 Para practicar: agregar un test que verifique que un evento `generation.failed` para una generacion ya `succeeded` no cambia su estado ni el saldo.
+
+## Etapa 5: Formulario e historial
+
+Conceptos nuevos:
+
+- API Resource como contrato con el front: `GenerationResource` decide que ve el usuario (su precio, nunca el costo del proveedor) y manda la plata como string formateado. Inertia resuelve el Resource paginado a `{data, links, meta}`.
+  Equivalente en Blade: el array que se pasa a la vista, pero tipado y testeable con `assertInertia`.
+- `usePoll` de Inertia: recarga parcial (`only: ['generations', 'flash']`) cada 3 s solo mientras hay generaciones abiertas. Ojo: una recarga parcial conserva los props que no pide, por eso `flash` va en la lista.
+- `useHttp` (Inertia 3) para pedidos JSON que no navegan, como el estimado: maneja CSRF, `processing`, `errors` y `cancel()` para descartar la respuesta vieja.
+  Diferencia clave con `useForm`: `useForm` hace una visita de Inertia (redirect, props nuevos); `useHttp` devuelve la respuesta y no toca la pagina.
+
+Donde verlo en el codigo: `app/Http/Resources/GenerationResource.php:20`, `resources/js/pages/Dashboard.vue:28`, `resources/js/components/generation/GenerationForm.vue:44`
+
+Para practicar: agregar al historial la cantidad de generaciones del dia y el limite ("3 of 20 today") como prop nuevo con su test en `GenerationPagesTest`.

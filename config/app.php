@@ -34,6 +34,14 @@ return [
 
     'admin_email' => env('ADMIN_EMAIL'),
 
+    // Accounts created by `php artisan db:seed`. Passwords only from .env, never in the repo.
+    'seed' => [
+        'admin_email' => env('SEED_ADMIN_EMAIL'),
+        'admin_password' => env('SEED_ADMIN_PASSWORD'),
+        'demo_email' => env('SEED_DEMO_EMAIL'),
+        'demo_password' => env('SEED_DEMO_PASSWORD'),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Application Debug Mode
