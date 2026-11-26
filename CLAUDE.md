@@ -17,6 +17,10 @@ Laravel 13, Vue 3 + Inertia (official Vue starter kit: TypeScript, Tailwind, sha
 
 Tests use the PostgreSQL DB `pixelforge_testing` (phpunit.xml). Never point tests at the dev DB.
 
+## Testing
+
+- TDD for services and controllers: failing test first, then minimal code (see CONSTRAINTS.md)
+
 ## Conventions (C12)
 
 - Validation and authorization in FormRequest (or Policy); thin controllers

@@ -2,15 +2,15 @@
 
 ## Etapas
 
-- [COMPLETA] Etapa 1: Scaffold, auth, PostgreSQL, constraints (commit: ver git log, init(etapa 1))
-- [PENDIENTE] Etapa 2: Deploy minimo en el VPS (Apache) - necesita datos del VPS y OK para deploy
-- [PENDIENTE] Etapa 3: Money + Pricing + tests
-- [PENDIENTE] Etapa 4: Cliente, alta, despachador, estado, ledger
-- [PENDIENTE] Etapa 5: Webhooks + polling + reconciliacion
-- [PENDIENTE] Etapa 6: Formulario e historial + deploy completo
-- [PENDIENTE] Etapa 7: Saldos
-- [PENDIENTE] Etapa 8: Admin, ajustes, conciliacion
-- [PENDIENTE] Etapa 9: README, datos demo, verificacion final, entrega
+- [COMPLETA] Etapa 1: Scaffold, auth, PostgreSQL, constraints (commit: 28f8ac5)
+- [COMPLETA] Etapa 2: Money + Pricing + tests (commit: pendiente)
+- [PENDIENTE] Etapa 3: Cliente, alta, despachador, estado, ledger
+- [PENDIENTE] Etapa 4: Webhooks + polling + reconciliacion
+- [PENDIENTE] Etapa 5: Formulario e historial
+- [PENDIENTE] Etapa 6: Saldos
+- [PENDIENTE] Etapa 7: Admin, ajustes, conciliacion
+- [PENDIENTE] Etapa 8: README, datos demo, verificacion final local
+- [PENDIENTE] Etapa 9: Deploy en VPS (lo hace el usuario: Virtualmin + Apache, pixelforge.mazar.com.ar) y entrega
 
 ## Decisiones tomadas sin el usuario
 
@@ -21,6 +21,8 @@
 - `/CLAUDE.md` sacado del .gitignore del kit para que se commitee
 - CI del kit (.github/workflows/tests.yml) con servicio Postgres 17 para que corra en GitHub
 - /security-review no corrio en la etapa 1: requiere origin/HEAD y el repo no tenia remoto. Queda para los reviews al pushear
+- Conteo de caracteres del prompt: code points (mb_strlen). Verificar contra la API real con un prompt con emoji (finding del review, pendiente)
+- Desde la etapa 3: TDD (pedido del usuario). La etapa 2 tuvo tests escritos junto al codigo, no test-first
 - Repo GitHub privado `pixelforge` (pedido del usuario); pasa a publico para la entrega
 
-Ultima actualizacion: etapa 1 completa
+Ultima actualizacion: etapa 2 completa

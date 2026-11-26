@@ -36,7 +36,7 @@ Asumidos (revisar):
 3. Paquetes de credito ficticio: 5, 10 y 20 USD. Usuario nuevo arranca en 0.
 4. Cuenta demo y cuenta admin creadas por seeder; contrasenas desde .env, nunca en el repo.
 5. Montos en pantalla en USD con hasta 9 decimales, minimo 2, sin redondear.
-6. VPS Linux con acceso SSH y root, dominio o subdominio apuntando, HTTPS.
+6. VPS con Virtualmin + Apache, dominio pixelforge.mazar.com.ar con HTTPS. El usuario hace el deploy, como ultima etapa.
 7. PostgreSQL.
 8. Reporte de errores por mail a ADMIN_EMAIL si hay SMTP; si no, solo log.
 9. Modo aprendizaje en la construccion (APRENDIZAJE.md).
@@ -195,21 +195,21 @@ Tests obligatorios: calculo de precios, liquidacion unica, firma, duplicados, de
 ## 12. Plan de etapas
 
 1. Scaffold, auth, PostgreSQL, constraints.
-2. Deploy minimo en el VPS (para tener URL de webhook temprano).
-3. Money + Pricing + tests.
-4. Cliente, alta, despachador, estado, ledger.
-5. Webhooks + polling + reconciliacion.
-6. Formulario e historial. Prueba con [fail], [slow], [duplicate], [overloaded], [blocked], [succeed]. Deploy: obligatorio completo.
-7. Saldos.
-8. Admin, ajustes, conciliacion.
-9. README, datos demo, verificacion final, entrega.
+2. Money + Pricing + tests.
+3. Cliente, alta, despachador, estado, ledger.
+4. Webhooks + polling + reconciliacion. En local los webhooks se prueban con tests y, contra la API real, con un tunel (cloudflared/ngrok) o solo con polling.
+5. Formulario e historial. Prueba con [fail], [slow], [duplicate], [overloaded], [blocked], [succeed].
+6. Saldos.
+7. Admin, ajustes, conciliacion.
+8. README, datos demo, verificacion final local.
+9. Deploy en el VPS (lo hace el usuario con la guia del README) y prueba de webhooks reales. Entrega.
 
 ## 13. Preguntas abiertas
 
 1. Crear la cuenta en Pixelforge y las dos API keys (bloquea etapa 4 en adelante contra la API real).
-2. VPS: sistema, panel (Coolify, Forge, ninguno), dominio, acceso.
+2. ~~VPS~~ Respondido: Virtualmin + Apache, dominio pixelforge.mazar.com.ar, deploy lo hace el usuario, al final.
 3. Hay SMTP para avisos de error?
-4. Nombre del repo publico de GitHub.
+4. ~~Repo~~ Respondido: github.com/matiazar/pixelforge, privado durante el desarrollo, publico para la entrega.
 
 ## 14. Estimacion
 
@@ -235,3 +235,4 @@ Rangos con desarrollo asistido por agente, incluyendo tu revision. Poco margen d
 
 - 2026-11-26: primera version.
 - 2026-11-26: aprobado. Servidor web del VPS: Apache (no Nginx).
+- 2026-11-26: deploy movido a la ultima etapa (pedido del usuario); VPS Virtualmin, dominio pixelforge.mazar.com.ar; repo privado.

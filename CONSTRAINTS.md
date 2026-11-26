@@ -14,6 +14,10 @@
 
 Tests run against the PostgreSQL database `pixelforge_testing` (see `phpunit.xml`), never the dev database.
 
+## Process
+
+- TDD for services and controllers: write the failing test, watch it fail for the right reason, then the minimal code (owner's request, from stage 3)
+
 ## Thresholds
 
 - Format and lint: 0 errors in touched files. Pre-existing warnings elsewhere do not block

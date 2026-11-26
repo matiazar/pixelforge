@@ -12,3 +12,15 @@ Conceptos nuevos:
 Donde verlo en el codigo: `app/Support/ErrorReporter.php:20`, `bootstrap/app.php:28`
 
 Para practicar: agregar a `ErrorReporter` un test que verifique que el subject del mail incluye el entorno (`production: RuntimeException`).
+
+## Etapa 2: Money + Pricing
+
+Conceptos nuevos:
+
+- Dinero en enteros: todo en nano-USD (`int`). Los strings decimales del proveedor ("12.50") se parsean con regex y `str_pad`, nunca con `(float)`. Una tarifa por 1M tokens en nano dividida 1_000_000 da nano por token; si no es exacta se rechaza (`UnsupportedRate`).
+- Redondeo hacia arriba sin floats: `intdiv(n, d) + (n % d > 0 ? 1 : 0)`. Se usa para ceil(t x 1.15) y para el 25% de margen.
+- Cache con fallback: la tabla viva se cachea 5 min; si el proveedor falla, el fallback de config se cachea 60 s para no pegarle en cada estimado.
+
+Donde verlo en el codigo: `app/Support/Money.php:21`, `app/Services/PricingService.php:70`
+
+Para practicar: agregar un test que verifique que `Money::format(-1)` devuelve "-0.000000001".
