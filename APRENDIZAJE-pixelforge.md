@@ -37,3 +37,16 @@ Conceptos nuevos:
 Donde verlo en el codigo: `app/Services/GenerationService.php:37`, `app/Services/DispatchService.php:120`, `app/Services/GenerationStateService.php:35`
 
 Para practicar: agregar un test que verifique que un 404 del proveedor en el POST, sin intento ambiguo previo, deja la generacion fallida local con la reserva liberada.
+
+## Etapa 4: Webhooks y polling
+
+Conceptos nuevos:
+
+- Firma HMAC sobre el body crudo: se firma `t.body` con el secreto y se compara con `hash_equals` (tiempo constante). Por eso el controller usa `$request->getContent()` y no `$request->all()`: re-serializar el JSON cambia los bytes y rompe la firma.
+- Dedupe e idempotencia en la misma transaccion: `insertOrIgnore` del `event_id` y el cambio de estado van juntos. Si aplicar falla, el rollback borra tambien el evento, respondemos 5xx y el proveedor reintenta. Un 2xx significa "aplicado".
+- Rutas fuera del grupo `web`: lo que se carga en `withRouting(then: ...)` no pasa por sesion, cookies ni CSRF. Es lo correcto para endpoints maquina a maquina.
+  Diferencia clave con `withoutMiddleware`: en Laravel 13 el middleware de CSRF necesita la sesion, asi que sacar middlewares uno por uno rompe; sacar la ruta del grupo es mas limpio.
+
+Donde verlo en el codigo: `app/Services/WebhookService.php:64`, `app/Services/PollingService.php:42`, `bootstrap/app.php:17`
+
+Para practicar: agregar un test que verifique que un evento `generation.failed` para una generacion ya `succeeded` no cambia su estado ni el saldo.

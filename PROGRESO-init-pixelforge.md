@@ -4,8 +4,8 @@
 
 - [COMPLETA] Etapa 1: Scaffold, auth, PostgreSQL, constraints (commit: 28f8ac5)
 - [COMPLETA] Etapa 2: Money + Pricing + tests (commit: cf732c5)
-- [COMPLETA] Etapa 3: Cliente, alta, despachador, estado, ledger (commit: pendiente)
-- [PENDIENTE] Etapa 4: Webhooks + polling + reconciliacion
+- [COMPLETA] Etapa 3: Cliente, alta, despachador, estado, ledger (commit: 1248fe3)
+- [COMPLETA] Etapa 4: Webhooks + polling + reconciliacion (commit: pendiente)
 - [PENDIENTE] Etapa 5: Formulario e historial
 - [PENDIENTE] Etapa 6: Saldos
 - [PENDIENTE] Etapa 7: Admin, ajustes, conciliacion
@@ -30,6 +30,10 @@
 - El tope de 15 minutos cuenta desde la creacion, incluida la espera en nuestra cola
 - 401 de la API: despachador pausado 10 min + mail al admin
 - Pendiente etapa 5: el kit exige email verificado (`verified` + MustVerifyEmail) y el spec dice sin verificacion de mail; hay que sacarlo para que el registro abierto funcione
+- Webhook en `routes/webhooks.php`, fuera del grupo `web` (sin sesion, cookies ni CSRF; lo autentica la firma HMAC)
+- Polling: un 404 del proveedor para una generacion abierta la falla local (`not_found_at_provider`) y libera la reserva
+- Polling: un payload que no se puede aplicar se reporta al admin y se saltea; no frena al resto
+- Firma con varios `v1` (rotacion de secreto): se acepta si alguno coincide
 - Repo GitHub privado `pixelforge` (pedido del usuario); pasa a publico para la entrega
 
-Ultima actualizacion: etapa 3 completa
+Ultima actualizacion: etapa 4 completa
