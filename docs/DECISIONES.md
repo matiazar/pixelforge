@@ -1,6 +1,8 @@
 # Decisiones: Pixelforge Studio
 
-Registro de decisiones de arquitectura. Solo se agrega. Las decisiones que cambian se reemplazan, no se editan.
+English: [DECISIONS.md](DECISIONS.md)
+
+Registro de decisiones de arquitectura. Solo se agrega. Las decisiones que cambian se reemplazan, no se editan. Una entrada nueva va en los dos archivos.
 
 ## DEC-001: Stack Laravel 13 + Vue 3 + Inertia (starter kit oficial)
 

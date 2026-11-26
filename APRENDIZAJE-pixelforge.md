@@ -92,6 +92,7 @@ Para practicar: agregar al reporte una columna "fallidas" por dia (generaciones 
 ## Etapa 8: README, datos demo y verificacion final
 
 Conceptos nuevos:
+
 - Comando artisan idempotente: datos demo por el flujo real (servicio, hold, cola) con form tokens fijos, asi correrlo dos veces no duplica.
   Equivalente en Laravel: un seeder, pero el seeder escribe directo en la DB y saltea las reglas de negocio.
 - Verificar contra el proveedor real: los errores aleatorios del proveedor (internal_error) no son bugs nuestros; se distinguen mirando el payload del proveedor.

@@ -1,5 +1,7 @@
 # Pixelforge API: notas de integracion
 
+English: [PIXELFORGE-API.md](PIXELFORGE-API.md)
+
 Fuente: https://pixelforge.promptedit.dev/docs (leido 2026-11-26). Resumen de lo que usa la app.
 
 ## Auth y limites

@@ -1,5 +1,7 @@
 # Preguntas: App de generacion de imagenes (Pixelforge)
 
+English: [QUESTIONS-pixelforge.md](QUESTIONS-pixelforge.md)
+
 Fecha: 26/11/2026
 
 Cada pregunta incluye lo que haremos si no hay respuesta. Las marcadas con [clave] son las que mas cambian el trabajo.

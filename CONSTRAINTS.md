@@ -1,5 +1,7 @@
 # Constraints: Pixelforge Studio
 
+Español: [CONSTRAINTS.es.md](CONSTRAINTS.es.md)
+
 ## Checks
 
 | Check               | Command                                                | When                                        |

@@ -59,6 +59,7 @@
 Ultima actualizacion: etapa 7 completa + fixes del review
 
 ## Notas etapa 8
+
 - Entorno local: PHP 8.4.28 NTS + phpredis en D:\Laragon (PATH de usuario). php.ini con curl.cainfo/openssl.cafile apuntando a D:/Laragon/etc/ssl/cacert.pem (sin eso, cURL error 60 contra Pixelforge)
 - Verificacion real: 5 demo encoladas y liquidadas por polling; [slow] fallo con internal_error del proveedor y el retry funciono; reporte con profit 25% exacto
 - Conciliacion: Pixelforge muestra 9 vs 4 nuestras el 2026-11-26 por generaciones previas a la DB dev con la misma API key (esperado)

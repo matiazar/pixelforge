@@ -1,5 +1,7 @@
 # Pixelforge Studio
 
+Español: [README.es.md](README.es.md)
+
 Web app to generate images with the Pixelforge API. Users see a price range before they submit, pay the provider cost plus a markup (25% by default, set by the admin) from a fictitious balance, and follow each generation live. Admins see spend, provider cost and profit per day and per user, and reconcile it against Pixelforge's own usage numbers.
 
 Built with Laravel 13, Vue 3 + Inertia (official Vue starter kit), PostgreSQL, Redis (cache) and a database queue.
@@ -131,7 +133,7 @@ Target: a VPS with Virtualmin, Apache and PHP-FPM, e.g. `https://pixelforge.exam
 
 ## Decisions and known limits
 
-The full log is in `docs/DECISIONES.md` and the spec in `docs/SPEC-TECNICO.md`. In short:
+The full log is in [docs/DECISIONS.md](docs/DECISIONS.md) and the spec in [docs/SPEC.md](docs/SPEC.md) (Spanish: `docs/DECISIONES.md`, `docs/SPEC-TECNICO.md`). In short:
 
 - **Money as integer nano-USD**, append-only ledger, hold of the maximum price. If rates change between estimate and completion, the real price is charged even above the hold; the balance can go negative, which blocks new generations.
 - **Own queue in front of Pixelforge** (3 in flight, FIFO) so a user never sees a provider 429. Each generation is stored before the POST, and the same idempotency key is used on every retry; ambiguous sends are reconciled by `local_id` before giving up.

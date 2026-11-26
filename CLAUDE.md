@@ -1,6 +1,6 @@
 # Pixelforge Studio
 
-Image generation app on the Pixelforge API (simulated). Users pay provider cost + markup (25% by default, admin setting, stored per generation) from a fictitious balance; admins see spend, cost and profit. Full spec: `docs/SPEC-TECNICO.md`.
+Image generation app on the Pixelforge API (simulated). Users pay provider cost + markup (25% by default, admin setting, stored per generation) from a fictitious balance; admins see spend, cost and profit. Full spec: `docs/SPEC.md` (Spanish: `docs/SPEC-TECNICO.md`).
 
 ## Stack
 
@@ -29,13 +29,13 @@ Tests use the PostgreSQL DB `pixelforge_testing` (phpunit.xml). Never point test
 - Money: integer nano-USD only, via `app/Support/Money`. No floats, also in the frontend (server sends formatted strings)
 - Only `GenerationStateService` changes a generation's `status`; only `LedgerService` writes balances
 - Business rules throw named exceptions (`InsufficientBalance`, `DailyLimitReached`, ...). No empty catches
-- Code, commits and README in English
+- Code and commits in English. Docs in English with a Spanish version (`*.es.md`, or the Spanish-named sibling in `docs/`); a doc change goes into both
 
 ## Project files
 
-- `CONSTRAINTS.md`: quality bar and what is forbidden to get to green
-- `docs/DECISIONES.md`: architecture decisions (append-only)
-- `docs/SPEC-TECNICO.md`: technical spec
+- `CONSTRAINTS.md` + `CONSTRAINTS.es.md`: quality bar and what is forbidden to get to green
+- `docs/DECISIONS.md` + `docs/DECISIONES.md`: architecture decisions (append-only; add each entry to both)
+- `docs/SPEC.md` + `docs/SPEC-TECNICO.md`: technical spec (English + Spanish; keep both in sync)
 
 ## Flujo de trabajo
 
