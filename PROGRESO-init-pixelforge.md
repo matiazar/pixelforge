@@ -9,7 +9,7 @@
 - [COMPLETA] Etapa 5: Formulario e historial (commit: d7ca4ab)
 - [COMPLETA] Etapa 6: Saldos (commit: 12f740d)
 - [COMPLETA] Etapa 7: Admin, ajustes, conciliacion (commit: el de mensaje init(etapa 7), ver git log)
-- [PENDIENTE] Etapa 8: README, datos demo, verificacion final local
+- [COMPLETA] Etapa 8: README, datos demo (pixelforge:demo), verificacion final local con la API real (commit: HASH8)
 - [PENDIENTE] Etapa 9: Deploy en VPS (lo hace el usuario: Virtualmin + Apache, pixelforge.mazar.com.ar) y entrega
 
 ## Decisiones tomadas sin el usuario
@@ -57,3 +57,9 @@
 - Entorno local: PHP 8.4.28 NTS en D:\Laragon\bin\php\php-8.4.28-nts-Win32-vs17-x64 (el lock pide >= 8.4.1; el PHP del PATH es 8.3.9)
 
 Ultima actualizacion: etapa 7 completa + fixes del review
+
+## Notas etapa 8
+- Entorno local: PHP 8.4.28 NTS + phpredis en D:\Laragon (PATH de usuario). php.ini con curl.cainfo/openssl.cafile apuntando a D:/Laragon/etc/ssl/cacert.pem (sin eso, cURL error 60 contra Pixelforge)
+- Verificacion real: 5 demo encoladas y liquidadas por polling; [slow] fallo con internal_error del proveedor y el retry funciono; reporte con profit 25% exacto
+- Conciliacion: Pixelforge muestra 9 vs 4 nuestras el 2026-11-26 por generaciones previas a la DB dev con la misma API key (esperado)
+- Nit pendiente: pixelforge:demo re-ejecutado imprime "Queued" para las ya existentes; doble click en Sync devuelve 429

@@ -88,3 +88,15 @@ Conceptos nuevos:
 Donde verlo en el codigo: `app/Providers/AppServiceProvider.php:31`, `app/Http/Requests/Admin/DateRangeRequest.php:35`, `app/Services/ReportService.php:19`
 
 Para practicar: agregar al reporte una columna "fallidas" por dia (generaciones failed, sin cobro) con su test en `ReportServiceTest`.
+
+## Etapa 8: README, datos demo y verificacion final
+
+Conceptos nuevos:
+- Comando artisan idempotente: datos demo por el flujo real (servicio, hold, cola) con form tokens fijos, asi correrlo dos veces no duplica.
+  Equivalente en Laravel: un seeder, pero el seeder escribe directo en la DB y saltea las reglas de negocio.
+- Verificar contra el proveedor real: los errores aleatorios del proveedor (internal_error) no son bugs nuestros; se distinguen mirando el payload del proveedor.
+- CA bundle de PHP en Windows: sin curl.cainfo, cualquier HTTPS saliente falla con cURL error 60.
+
+Donde verlo en el codigo: `app/Console/Commands/CreateDemoGenerations.php:49`, `tests/Feature/DemoGenerationsCommandTest.php:36`
+
+Para practicar: que el comando imprima "Already queued" para las muestras que ya existian, con su test.

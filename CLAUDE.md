@@ -1,15 +1,16 @@
 # Pixelforge Studio
 
-Image generation app on the Pixelforge API (simulated). Users pay provider cost + 25% from a fictitious balance; admins see spend, cost and profit. Full spec: `docs/SPEC-TECNICO.md`.
+Image generation app on the Pixelforge API (simulated). Users pay provider cost + markup (25% by default, admin setting, stored per generation) from a fictitious balance; admins see spend, cost and profit. Full spec: `docs/SPEC-TECNICO.md`.
 
 ## Stack
 
-Laravel 13, Vue 3 + Inertia (official Vue starter kit: TypeScript, Tailwind, shadcn-vue, Fortify), PostgreSQL, database queue + scheduler, Pest.
+Laravel 13 on PHP 8.4, Vue 3 + Inertia (official Vue starter kit: TypeScript, Tailwind, shadcn-vue, Fortify), PostgreSQL, Redis cache, database queue + scheduler, Pest.
 
 ## Commands
 
-- Run: `composer dev` (server, queue, vite)
+- Run: `composer dev` (server, queue, vite) plus `php artisan schedule:work` (dispatcher and polling)
 - Migrate: `php artisan migrate`
+- Demo data: `php artisan db:seed` then `php artisan pixelforge:demo`
 - Module tests: `php artisan test --filter=<Module>`
 - Full suite: `php artisan test`
 - Format/lint: `vendor/bin/pint --dirty`, `npm run check`, `npm run types:check`

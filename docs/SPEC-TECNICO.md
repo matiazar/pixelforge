@@ -72,7 +72,7 @@ Dinero: BIGINT en nano-USD (1 USD = 1_000_000_000). Sin floats en ningun punto, 
 
 **Pricing** (PHP puro, con tests primero en los casos de la doc)
 
-- Estimado: texto t = ceil(caracteres Unicode / 4), minimo floor(t x 0.85), maximo ceil(t x 1.15); imagen 765 por referencia; salida segun tabla; razonamiento min-max por calidad. Precio = costo x 125 / 100.
+- Estimado: texto t = ceil(caracteres Unicode / 4), minimo floor(t x 0.85), maximo ceil(t x 1.15); imagen 765 por referencia; salida segun tabla; razonamiento min-max por calidad. Precio = costo x (100 + markup) / 100, con el markup guardado en la generacion (DEC-011).
 - Tarifas del estimado: GET /v1/pricing con cache de 5 min y valores de respaldo en config.
 - Costo final: usage x rates de esa generacion. Tarifas decimales se convierten desde string a nano-USD por token; si no da entero, excepcion. Si el 25% no da entero, redondeo hacia arriba al nano.
 - Caso de control: high, 1536x1024, 400 caracteres, 2 referencias: costo maximo 0.373875, precio maximo 0.46734375.
