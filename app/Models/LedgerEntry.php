@@ -43,4 +43,12 @@ class LedgerEntry extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * @return BelongsTo<Generation, $this>
+     */
+    public function generation(): BelongsTo
+    {
+        return $this->belongsTo(Generation::class);
+    }
 }

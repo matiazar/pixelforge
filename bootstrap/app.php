@@ -1,5 +1,7 @@
 <?php
 
+use App\Exceptions\DailyLimitReached;
+use App\Exceptions\InsufficientBalance;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Support\ErrorReporter;
@@ -29,6 +31,9 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        // Business rule refusals: the user sees the message, nothing is broken.
+        $exceptions->dontReport([InsufficientBalance::class, DailyLimitReached::class]);
+
         // Framework noise (validation, 404, 403, auth) is already excluded by Laravel.
         $exceptions->report(function (Throwable $e): void {
             app(ErrorReporter::class)->report($e);

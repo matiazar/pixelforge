@@ -1,10 +1,13 @@
 <?php
 
 use App\Enums\GenerationStatus;
+use App\Exceptions\DailyLimitReached;
+use App\Exceptions\InsufficientBalance;
 use App\Models\Generation;
 use App\Models\Setting;
 use App\Models\User;
 use App\Services\LedgerService;
+use Illuminate\Support\Facades\Exceptions;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
@@ -96,4 +99,17 @@ it('accepts a request without the reference images field', function () {
         ->assertSessionHasNoErrors();
 
     expect(Generation::first()->request_payload['reference_images'])->toBe([]);
+});
+
+it('does not report business rule refusals as errors', function () {
+    Exceptions::fake();
+    $poor = User::factory()->create();
+
+    $this->actingAs($poor)->post(route('generations.store'), storePayload())->assertSessionHasErrors('balance');
+
+    Setting::put('daily_limit', '0');
+    $this->actingAs($this->user)->post(route('generations.store'), storePayload())->assertSessionHasErrors('daily_limit');
+
+    Exceptions::assertNotReported(InsufficientBalance::class);
+    Exceptions::assertNotReported(DailyLimitReached::class);
 });

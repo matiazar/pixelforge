@@ -21,6 +21,7 @@ declare module '@inertiajs/core' {
             auth: Auth;
             sidebarOpen: boolean;
             flash: { status: string | null };
+            balance: string | null;
             [key: string]: unknown;
         };
     }

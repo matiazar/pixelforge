@@ -64,3 +64,15 @@ Conceptos nuevos:
 Donde verlo en el codigo: `app/Http/Resources/GenerationResource.php:20`, `resources/js/pages/Dashboard.vue:28`, `resources/js/components/generation/GenerationForm.vue:44`
 
 Para practicar: agregar al historial la cantidad de generaciones del dia y el limite ("3 of 20 today") como prop nuevo con su test en `GenerationPagesTest`.
+
+## Etapa 6: Saldos
+
+Conceptos nuevos:
+
+- Props compartidos perezosos: en `HandleInertiaRequests::share()` el saldo va como closure (`fn () => ...`), asi solo se calcula cuando la respuesta lo incluye, y una recarga parcial puede pedirlo por nombre (`only: ['balance']`).
+- `$attributes` en el modelo: los defaults de la columna (balance 0, no admin) tambien en memoria. Sin esto, un `User` recien creado tiene `balance_nano = null` hasta releerlo de la DB.
+- `dontReport` para reglas de negocio: un rechazo esperado (sin saldo, limite diario) no es un error del sistema. Se muestra al usuario y no se manda al admin.
+
+Donde verlo en el codigo: `app/Http/Middleware/HandleInertiaRequests.php:46`, `app/Models/User.php:38`, `bootstrap/app.php:32`
+
+Para practicar: agregar un test que verifique que un usuario con saldo negativo ve el aviso en la pagina Credits y no puede generar.

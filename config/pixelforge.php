@@ -10,6 +10,12 @@ return [
     'markup_percent' => 25,
 
     /*
+    | Fictitious credit packs (USD) offered by "Buy credits". No real payment.
+    */
+
+    'credit_packs' => ['5', '10', '20'],
+
+    /*
     | Defaults for the admin settings (settings table overrides them).
     */
 

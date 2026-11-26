@@ -29,7 +29,7 @@ const hasOpen = computed(() =>
 );
 const { start, stop } = usePoll(
     3000,
-    { only: ['generations', 'flash'] },
+    { only: ['generations', 'flash', 'balance'] },
     { autoStart: false },
 );
 watch(hasOpen, (open) => (open ? start() : stop()), { immediate: true });

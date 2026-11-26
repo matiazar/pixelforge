@@ -53,6 +53,16 @@ class User extends Authenticatable implements PasskeyUser
     }
 
     /**
+     * Same defaults as the columns, so a freshly created model is complete.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'is_admin' => false,
+        'balance_nano' => 0,
+    ];
+
+    /**
      * @return HasMany<Generation, $this>
      */
     public function generations(): HasMany

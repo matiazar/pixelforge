@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { useForm, useHttp } from '@inertiajs/vue3';
+import { Link, useForm, useHttp, usePage } from '@inertiajs/vue3';
 import { LoaderCircle, Plus, X } from '@lucide/vue';
 import { computed, onBeforeUnmount, ref, watch } from 'vue';
+import { index as credits } from '@/actions/App/Http/Controllers/CreditsController';
 import {
     estimate,
     store,
@@ -36,6 +37,7 @@ const quote = useHttp({
     quality: form.quality,
     reference_count: 0,
 });
+const page = usePage();
 const range = ref<PriceRange | null>(null);
 const estimateFailed = ref(false);
 let timer: ReturnType<typeof setTimeout> | undefined;
@@ -297,6 +299,16 @@ const blockingError = computed(
                     role="alert"
                 >
                     {{ blockingError }}
+                </p>
+                <p
+                    class="flex items-baseline justify-between text-sm tabular-nums"
+                >
+                    <span class="text-muted-foreground">Your balance</span>
+                    <Link
+                        :href="credits()"
+                        class="font-medium underline-offset-4 hover:underline"
+                        >${{ page.props.balance }}</Link
+                    >
                 </p>
                 <Button
                     type="submit"
