@@ -32,7 +32,7 @@ class CreditsController extends Controller
     public function store(BuyCreditsRequest $request, LedgerService $ledger): RedirectResponse
     {
         $amount = Money::fromDecimalString($request->string('pack')->toString());
-        $ledger->topUp($request->user(), $amount);
+        $ledger->topUp($request->user(), $amount, $request->string('form_token')->toString());
 
         return back()->with('status', 'Added $'.Money::format($amount).' to your balance');
     }

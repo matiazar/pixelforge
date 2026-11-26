@@ -25,6 +25,7 @@ class BuyCreditsRequest extends FormRequest
 
         return [
             'pack' => ['required', 'string', Rule::in($packs)],
+            'form_token' => ['required', 'uuid'],
         ];
     }
 }

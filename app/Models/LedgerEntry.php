@@ -14,6 +14,7 @@ use Illuminate\Support\Carbon;
  * @property string|null $generation_id
  * @property string $type topup | hold | release | charge
  * @property int $amount_nano
+ * @property string|null $idempotency_key
  * @property Carbon $created_at
  */
 class LedgerEntry extends Model
@@ -29,7 +30,7 @@ class LedgerEntry extends Model
     public const UPDATED_AT = null;
 
     /** @var list<string> */
-    protected $fillable = ['user_id', 'generation_id', 'type', 'amount_nano'];
+    protected $fillable = ['user_id', 'generation_id', 'type', 'amount_nano', 'idempotency_key'];
 
     protected function casts(): array
     {

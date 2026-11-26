@@ -15,16 +15,28 @@ use InvalidArgumentException;
  */
 class LedgerService
 {
-    public function topUp(User $user, int $amountNano): LedgerEntry
+    /**
+     * With an idempotency key, the same key for the same user returns the first
+     * top-up instead of adding money again.
+     */
+    public function topUp(User $user, int $amountNano, ?string $idempotencyKey = null): LedgerEntry
     {
         if ($amountNano <= 0) {
             throw new InvalidArgumentException('Top-up amount must be positive');
         }
 
-        return DB::transaction(function () use ($user, $amountNano) {
+        return DB::transaction(function () use ($user, $amountNano, $idempotencyKey) {
             $this->lockUser($user->id);
 
-            return $this->record($user->id, null, LedgerEntry::TOPUP, $amountNano);
+            if ($idempotencyKey !== null) {
+                $existing = LedgerEntry::where('user_id', $user->id)->where('idempotency_key', $idempotencyKey)->first();
+
+                if ($existing !== null) {
+                    return $existing;
+                }
+            }
+
+            return $this->record($user->id, null, LedgerEntry::TOPUP, $amountNano, $idempotencyKey);
         });
     }
 
@@ -69,13 +81,14 @@ class LedgerService
         User::whereKey($userId)->lockForUpdate()->firstOrFail();
     }
 
-    private function record(int $userId, ?string $generationId, string $type, int $amountNano): LedgerEntry
+    private function record(int $userId, ?string $generationId, string $type, int $amountNano, ?string $idempotencyKey = null): LedgerEntry
     {
         $entry = LedgerEntry::create([
             'user_id' => $userId,
             'generation_id' => $generationId,
             'type' => $type,
             'amount_nano' => $amountNano,
+            'idempotency_key' => $idempotencyKey,
         ]);
 
         User::whereKey($userId)->increment('balance_nano', $amountNano);

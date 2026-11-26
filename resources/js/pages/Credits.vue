@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Form, Head, Link, usePage } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import CreditsController from '@/actions/App/Http/Controllers/CreditsController';
 import { Button } from '@/components/ui/button';
 import type { Paginated } from '@/types';
@@ -28,6 +28,10 @@ defineOptions({
 const page = usePage();
 const status = computed(() => page.props.flash?.status ?? null);
 const negative = computed(() => props.balance.startsWith('-'));
+
+// One token per purchase: a resent POST with the same token adds nothing.
+const formToken = ref(crypto.randomUUID());
+const renewToken = () => (formToken.value = crypto.randomUUID());
 
 const labels: Record<Movement['type'], string> = {
     topup: 'Credit added',
@@ -77,9 +81,15 @@ const when = (iso: string) => new Date(iso).toLocaleString();
                         :key="pack"
                         v-bind="CreditsController.store.form()"
                         :options="{ preserveScroll: true }"
+                        @success="renewToken"
                         #default="{ processing }"
                     >
                         <input type="hidden" name="pack" :value="pack" />
+                        <input
+                            type="hidden"
+                            name="form_token"
+                            :value="formToken"
+                        />
                         <Button
                             type="submit"
                             variant="outline"

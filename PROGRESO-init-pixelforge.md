@@ -7,7 +7,7 @@
 - [COMPLETA] Etapa 3: Cliente, alta, despachador, estado, ledger (commit: 1248fe3)
 - [COMPLETA] Etapa 4: Webhooks + polling + reconciliacion (commit: 18c4f00)
 - [COMPLETA] Etapa 5: Formulario e historial (commit: d7ca4ab)
-- [COMPLETA] Etapa 6: Saldos (commit: pendiente)
+- [COMPLETA] Etapa 6: Saldos (commit: 12f740d)
 - [PENDIENTE] Etapa 7: Admin, ajustes, conciliacion
 - [PENDIENTE] Etapa 8: README, datos demo, verificacion final local
 - [PENDIENTE] Etapa 9: Deploy en VPS (lo hace el usuario: Virtualmin + Apache, pixelforge.mazar.com.ar) y entrega
@@ -40,7 +40,7 @@
 - Etapa 5 (arreglo pedido por el usuario): borrar cuenta sacado del perfil (ruta, accion, request, componente). Fuera de alcance en el spec: borraria registros de dinero. El admin borrado en local se recreo con el seeder
 - Etapa 5: links del kit (Repository, Documentation) sacados del menu; item "Dashboard" renombrado "Create"
 - Etapa 6: pagina Credits con saldo, paquetes 5/10/20 USD (config `pixelforge.credit_packs`) e historial de movimientos; saldo visible en el menu y en el ticket
-- Etapa 6: comprar credito no tiene token anti doble envio (credito ficticio, boton deshabilitado mientras procesa). Finding del review, no aplicado
+- Etapa 6: comprar credito lleva form_token (columna ledger_entries.idempotency_key, unica por usuario): un POST reenviado no suma dos veces
 - Etapa 6: InsufficientBalance y DailyLimitReached ya no se reportan (en produccion habrian mandado mail al admin por cada usuario sin saldo)
 - Etapa 6: palabras magicas probadas contra la API real (solo polling, sin tunel): [succeed] y [slow] cobradas dentro del rango; [fail], [blocked] y [overloaded] fallidas sin cobro; [duplicate] fallo al azar del proveedor (sin cobro). Saldo final exacto. Webhooks reales quedan para el deploy
 - Repo GitHub privado `pixelforge` (pedido del usuario); pasa a publico para la entrega
