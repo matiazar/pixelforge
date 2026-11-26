@@ -10,6 +10,16 @@ return [
     'markup_percent' => 25,
 
     /*
+    | Defaults for the admin settings (settings table overrides them).
+    */
+
+    'settings' => [
+        'daily_limit' => 20,
+        'timezone' => 'UTC',
+        'registration_open' => '1',
+    ],
+
+    /*
     | How long the live GET /v1/pricing table is cached.
     */
 

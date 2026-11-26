@@ -24,3 +24,16 @@ Conceptos nuevos:
 Donde verlo en el codigo: `app/Support/Money.php:21`, `app/Services/PricingService.php:70`
 
 Para practicar: agregar un test que verifique que `Money::format(-1)` devuelve "-0.000000001".
+
+## Etapa 3: Cliente, alta, despachador, estado, ledger
+
+Conceptos nuevos:
+
+- Lock de fila en Postgres: `User::whereKey($id)->lockForUpdate()` dentro de `DB::transaction` serializa dos requests del mismo usuario. Asi el chequeo de saldo y la reserva no se pisan, y un doble submit encuentra la generacion ya creada.
+- Marca "ambigua" antes de llamar afuera: se guarda (commit) `ambiguous = true` antes del POST. Si el worker muere a mitad de camino, la marca queda y la reconciliacion por `metadata.local_id` decide despues. La Idempotency-Key (el ULID) hace que reintentar no duplique.
+- `afterCommit()` en jobs: `DispatchPendingGenerations::dispatch()->afterCommit()` solo encola si la transaccion se confirma; si hay rollback, el job no existe.
+  Diferencia clave con un dispatch normal: sin `afterCommit` el worker podria leer la DB antes del commit y no ver la generacion.
+
+Donde verlo en el codigo: `app/Services/GenerationService.php:37`, `app/Services/DispatchService.php:120`, `app/Services/GenerationStateService.php:35`
+
+Para practicar: agregar un test que verifique que un 404 del proveedor en el POST, sin intento ambiguo previo, deja la generacion fallida local con la reserva liberada.
