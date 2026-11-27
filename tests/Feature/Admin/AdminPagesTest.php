@@ -167,7 +167,16 @@ it('queues a forced sync and the dispatcher instead of calling Pixelforge in the
 
 it('allows one sync per minute so it cannot use up the shared Pixelforge budget', function () {
     $this->actingAs($this->admin)->post(route('admin.reconciliation.sync'))->assertRedirect();
-    $this->actingAs($this->admin)->post(route('admin.reconciliation.sync'))->assertTooManyRequests();
+
+    // A second click inside the minute is refused with a message on the page, not a bare 429 screen.
+    $this->actingAs($this->admin)
+        ->from(route('admin.reconciliation'))
+        ->post(route('admin.reconciliation.sync'))
+        ->assertRedirect(route('admin.reconciliation'))
+        ->assertSessionHas('status', fn (string $status) => str_starts_with($status, 'A sync already ran in the last minute.'));
+
+    Queue::assertPushed(SyncOpenGenerations::class, 1);
+    Queue::assertPushed(DispatchPendingGenerations::class, 1);
 });
 
 it('does not mark a day as matching when the cost matches but the count does not', function () {

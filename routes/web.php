@@ -26,7 +26,7 @@ Route::middleware(['auth', 'can:admin'])->prefix('admin')->name('admin.')->group
     Route::get('reconciliation', [ReconciliationController::class, 'index'])->name('reconciliation');
     Route::post('reconciliation/sync', [ReconciliationController::class, 'sync'])
         // A forced pass can make up to 20 GETs; the shared Pixelforge budget is 50 per minute.
-        ->middleware('throttle:1,1')
+        ->middleware('throttle:reconciliation-sync')
         ->name('reconciliation.sync');
     Route::get('settings', [SettingsController::class, 'edit'])->name('settings.edit');
     Route::put('settings', [SettingsController::class, 'update'])->name('settings.update');
