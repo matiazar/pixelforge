@@ -328,3 +328,15 @@ it('queues the dispatcher when a generation reaches a final state', function () 
 
     Queue::assertPushed(DispatchPendingGenerations::class);
 });
+
+it('logs the daily quota pause so a stopped queue leaves a trace', function () {
+    pendingGeneration($this->user);
+    Http::fake(['pf.test/*' => rejected('daily_limit_exceeded', 429)]);
+    Log::spy();
+
+    $this->dispatcher->dispatchPending();
+
+    Log::shouldHaveReceived('warning')
+        ->with('Dispatch paused: Pixelforge daily quota reached', Mockery::on(fn (array $context) => isset($context['until'])))
+        ->once();
+});

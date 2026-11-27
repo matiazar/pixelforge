@@ -173,7 +173,10 @@ class DispatchService
                 return false;
 
             case 'daily_limit_exceeded':
-                $this->pauseUntil(now('UTC')->addDay()->startOfDay());
+                $until = now('UTC')->addDay()->startOfDay();
+                // Not an error to report, but the queue stops for hours: leave a trace.
+                Log::warning('Dispatch paused: Pixelforge daily quota reached', ['until' => $until->toIso8601String()]);
+                $this->pauseUntil($until);
                 $this->requeue($generation, $wasAmbiguous, 0);
                 $this->failWaitingForQuota();
 

@@ -17,6 +17,9 @@ class DispatchPendingGenerations implements ShouldBeUniqueUntilProcessing, Shoul
 
     public int $tries = 1;
 
+    /** A lost queued job (jobs table wiped, worker killed) frees its unique lock after this, instead of never. */
+    public int $uniqueFor = 60;
+
     public function handle(DispatchService $dispatcher): void
     {
         $dispatcher->dispatchPending();

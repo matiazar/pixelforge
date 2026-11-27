@@ -17,6 +17,9 @@ class SyncOpenGenerations implements ShouldBeUniqueUntilProcessing, ShouldQueue
 
     public int $tries = 1;
 
+    /** A lost queued job (jobs table wiped, worker killed) frees its unique lock after this, instead of never. */
+    public int $uniqueFor = 60;
+
     public function __construct(public bool $force = false) {}
 
     /**
