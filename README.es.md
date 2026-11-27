@@ -106,7 +106,7 @@ Destino: un VPS con Virtualmin, Apache y PHP-FPM, p. ej. `https://pixelforge.exa
     npm ci && npm run build      # necesita php 8.4 en el PATH (los helpers de rutas se generan en el build)
     cp .env.example .env && php artisan key:generate
     ```
-    En `.env`: `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL=https://...`, los `PIXELFORGE_*` de produccion, `DB_*`, `REDIS_*`, `MAIL_*`, `ADMIN_EMAIL`, `SEED_*`.
+    En `.env`: `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL=https://...`, los `PIXELFORGE_*` de produccion, `DB_*`, `REDIS_*`, `MAIL_*`, `ADMIN_EMAIL`, `SEED_*`, y `TRUSTED_PROXIES` si un proxy termina el HTTPS delante de la app (`*`, o la IP del proxy si la app tambien es accesible directo). Sin eso, los redirects van a http y el login/logout quedan trabados hasta el F5.
 3. **Base de datos y demo**:
     ```bash
     php artisan migrate --force

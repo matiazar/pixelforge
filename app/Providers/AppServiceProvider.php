@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\User;
 use Carbon\CarbonImmutable;
+use Illuminate\Http\Middleware\TrustProxies;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -26,6 +27,13 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+
+        // Behind the VPS proxy the request arrives as http: without this, redirects go to http://
+        // and the browser blocks them (Inertia stays on the page until F5). Unset = trust no proxy.
+        $proxies = config('app.trusted_proxies');
+        if (is_string($proxies) && $proxies !== '') {
+            TrustProxies::at($proxies === '*' ? '*' : array_map('trim', explode(',', $proxies)));
+        }
 
         // Admin area: report, reconciliation, global settings. is_admin is set only by the seeder.
         Gate::define('admin', fn (User $user): bool => $user->is_admin);

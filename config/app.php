@@ -68,6 +68,9 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    // Proxies allowed to set X-Forwarded-* headers: "*" or a comma list of IPs. Empty = none.
+    'trusted_proxies' => env('TRUSTED_PROXIES'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone
